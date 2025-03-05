@@ -84,14 +84,20 @@ while (j <= maxit && relres > tol)
         % construction de H_barre
         H_barre = H(1:j+1, 1:j);
         % application des rotations de Givens à H_barre pour le rendre triangulaire supérieur
-        for i = 1:j
-            % calcul de la rotation de Givens
-            c = H_barre(i, i) / sqrt(H_barre(i, i)^2 + H_barre(i+1, i)^2);
-            s = H_barre(i+1, i) / sqrt(H_barre(i, i)^2 + H_barre(i+1, i)^2);
-            % application de la rotation à H et à y
-            H_barre([i, i+1], i:j) = [c, s; -s, c] * H_barre([i, i+1], i:j);
-            e1([i, i+1]) = [c, s; -s, c] * e1([i, i+1]);
-        end
+        % for i = 1:j
+        %     % calcul de la rotation de Givens
+        %     c = H_barre(i, i) / sqrt(H_barre(i, i)^2 + H_barre(i+1, i)^2);
+        %     s = H_barre(i+1, i) / sqrt(H_barre(i, i)^2 + H_barre(i+1, i)^2);
+        %     % application de la rotation à H et à y
+        %     H_barre([i, i+1], i:j) = [c, s; -s, c] * H_barre([i, i+1], i:j);
+        %     e1([i, i+1]) = [c, s; -s, c] * e1([i, i+1]);
+        % end
+        % calcul de la rotation de Givens
+        c = H_barre(j, j) / sqrt(H_barre(j, j)^2 + H_barre(j+1, j)^2);
+        s = H_barre(j+1, j) / sqrt(H_barre(i, i)^2 + H_barre(i+1, i)^2);
+        % application de la rotation à H et à y
+        H_barre([i, i+1], i:j) = [c, s; -s, c] * H_barre([i, i+1], i:j);
+        e1([i, i+1]) = [c, s; -s, c] * e1([i, i+1]);
         % resolution de H_barre.y = beta.e1 avec '\'
         y = H_barre(1:j+1, 1:j) \ (beta * e1);
         % Estimation du résidu
