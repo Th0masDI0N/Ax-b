@@ -13,8 +13,11 @@ b = [1:n]';   % Le vecteur b de taille n
 x0 = zeros(n, 1); % Point de départ initial
 kmax = n-1;     % Nombre maximum d'itérations
 A_dense = full(A);
+
 % Calculer le nombre de conditionnement de A_dense
-condition_number = cond(A_dense)
+condition_number = cond(A_dense);
+fprintf('Nombre de conditionnement de A : %f\n', condition_number);
+
 % Initialisation d'un tableau pour stocker les résultats
 results = table(); % Table vide pour stocker les résultats
 iteration_count = 0; % Compteur d'itérations pour les résultats
@@ -23,7 +26,7 @@ iteration_count = 0; % Compteur d'itérations pour les résultats
 tolerances = [1e-6, 1e-8, 1e-10];
 
 for tol_idx = 1:length(tolerances)
-    eps = tolerances(tol_idx); % Met à jour la tolérance
+    eps = tolerances(tol_idx);
 
     % FOM
     [x_fom, flag_fom, relres_fom, iter_fom, resvec_fom] = krylov(A, b, x0, eps, kmax, 0);
@@ -51,12 +54,9 @@ for tol_idx = 1:length(tolerances)
     xlabel('Nombre d\ itérations');
     ylabel('Norme du résidu');
 
-    % Enregistrement de la figure dans un fichier PNG
+    % Enregistrement de la figure
     saveas(gcf, ['residu_epsilon_' num2str(eps) '.png']);
 end
 
-% Enregistrement des résultats dans un fichier CSV
+% Enregistrement des résultats
 writetable(results, 'krylov_results.csv');
-
-% Résumé des résultats
-disp('Les résultats ont été enregistrés dans "krylov_results.csv".');
