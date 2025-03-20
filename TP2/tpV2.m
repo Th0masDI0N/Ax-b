@@ -10,23 +10,12 @@ end
 
 % Chargement des matrices disponibles
 matrices = {'mat0', 'mat1', 'mat2', 'mat3'};
-permutation_methods = {'RCM', 'AMD'}; % Ajouter 'Metis' si disponible
+permutation_methods = {'RCM', 'AMD'};
 resultats = [];
 
 for i = 1:length(matrices)
     load(matrices{i}); % Charger la matrice
     fprintf('Traitement de la matrice : %s\n', matrices{i});
-    
-    % Vérification que la matrice est symétrique définie positive
-    if ~isequal(A, A')
-        warning('La matrice %s n''est pas symétrique. Passage à la suivante.', matrices{i});
-        continue;
-    end
-    [R, flag] = chol(A);
-    if flag ~= 0
-        warning('La matrice %s n''est pas définie positive. Passage à la suivante.', matrices{i});
-        continue;
-    end
 
     n = size(A,1);
     b = (1:n)';
@@ -37,14 +26,10 @@ for i = 1:length(matrices)
         
         % Sélection de la permutation
         switch method
-            case 'None'
-                P = 1:n; % Pas de permutation
             case 'RCM'
                 P = symrcm(A); % Reverse Cuthill-McKee
             case 'AMD'
                 P = amd(A); % Approximate Minimum Degree
-            % case 'Metis'
-            %     P = metis(A); % Nested Dissection (si disponible)
         end
 
         % Matrice permutée
@@ -117,13 +102,11 @@ for i = 1:length(matrices)
         % Stockage des résultats
         resultats = [resultats; {matrices{i}, method, fillin_no_perm, fillin_perm, flops_no_perm, flops_perm, error_no_perm, error_perm}];
 
-        % Fermer la figure pour éviter l'encombrement
+        % Fermer la figure
         close;
     end
 end
 
-% Sauvegarde des résultats dans un fichier CSV
+% Sauvegarde des résultats
 T = cell2table(resultats, 'VariableNames', {'Matrice', 'Methode', 'Fill-in_Sans', 'Fill-in_Avec', 'Flops_Sans', 'Flops_Avec', 'Erreur_Sans', 'Erreur_Avec'});
 writetable(T, 'resultats_comparaison.csv');
-
-fprintf('Résultats enregistrés dans resultats_comparaison.csv et figures sauvegardées dans le dossier "figures".\n');
